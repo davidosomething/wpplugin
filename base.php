@@ -1,4 +1,5 @@
 <?php
+if (!class_exists('DKOWPPlugin') {
 class DKOWPPlugin
 {
   protected $paths = array(
@@ -110,4 +111,5 @@ class DKOWPPlugin
     return $output;
   }
 
-} /* end of class */
+} // class
+} // class_exists
