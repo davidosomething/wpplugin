@@ -1,5 +1,5 @@
 <?php
-if (!class_exists('DKOWPPlugin') {
+if (!class_exists('DKOWPPlugin')) {
 class DKOWPPlugin
 {
   protected $paths = array(
