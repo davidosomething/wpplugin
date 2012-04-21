@@ -2,16 +2,16 @@
 if (!class_exists('DKOWPPlugin')):
 abstract class DKOWPPlugin
 {
-  private $wpdb;
   private $plugin_file = __FILE__;
+  private $wpdb;
 
   /**
    * constructor
    */
-  protected function __construct($extending_class_file) {
+  protected function __construct($plugin_file) {
     global $wpdb;
     $this->wpdb = $wpdb;
-    $this->plugin_file = $extending_class_file;
+    $this->plugin_file = $plugin_file;
   }
 
   /**
