@@ -16,7 +16,7 @@ if (!function_exists('json_decode')) {
 if (!class_exists('DKOWPPlugin_API')):
 abstract class DKOWPPlugin_API
 {
-  public $curlopts = array();
+  protected $curlopts = array();
   protected $ch = null; // curl handler
 
   /**
@@ -27,19 +27,19 @@ abstract class DKOWPPlugin_API
   public function __construct() {
     if (!defined('SERVER_ENVIRONMENT') || in_array(SERVER_ENVIRONMENT, array('STAGE', 'PROD'))) {
       $this->curlopts = array(
-        CURLOPT_SSL_VERIFYHOST => true,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_SSLVERSION => 3 // fixes everything :D
+        CURLOPT_SSL_VERIFYHOST  => true,
+        CURLOPT_SSL_VERIFYPEER  => true,
+        CURLOPT_RETURNTRANSFER  => true,
+        CURLOPT_SSLVERSION      => 3 // fixes everything :D
       );
     }
     elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV'))) { // local or dev
       $this->curlopts = array(
+        CURLOPT_CONNECTTIMEOUT  => 2,
         CURLOPT_SSL_VERIFYHOST  => false,
         CURLOPT_SSL_VERIFYPEER  => false,
         CURLOPT_RETURNTRANSFER  => true,
-        CURLOPT_SSLVERSION      => 3,
-        CURLOPT_VERBOSE         => 1
+        CURLOPT_SSLVERSION      => 3
       );
     }
 
@@ -53,14 +53,14 @@ abstract class DKOWPPlugin_API
    * @param string $url
    * @return string response
    */
-  public function make_request($url) {
-    $this->ch = curl_init($url);
-    curl_setopt_array($this->ch, $this->curlopts);
-
-    $result = curl_exec($this->ch);
-    $result = apply_filters('dkowpplugin_after_request', $result);
-    do_action('dkowppplugin_api_handle_errors', $result);
-    curl_close($this->ch);
+  protected function make_request($url) {
+    $ch = curl_init();
+    curl_setopt_array($ch, $this->curlopts);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    $result = curl_exec($ch);
+    $result = apply_filters('dkowpplugin_api_after_request', $result, $ch, $url);
+    do_action('dkowppplugin_api_handle_errors', $ch, $result);
+    curl_close($ch);
     return $result;
   }
 
@@ -71,10 +71,10 @@ abstract class DKOWPPlugin_API
    * @param object $ch last used CURL
    * @return void
    */
-  public function handle_errors($result) {
-    if (curl_errno($this->ch)) {
+  public function handle_errors($ch, $result) {
+    if (curl_errno($ch)) {
       // @TODO wp_die($msg, $title, $args=array())
-      throw new Exception(curl_error($this->ch));
+      throw new Exception(curl_error($ch));
     }
   }
 
