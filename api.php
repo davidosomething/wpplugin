@@ -53,9 +53,16 @@ abstract class DKOWPPlugin_API
    * @param string $url
    * @return string response
    */
-  protected function make_request($url) {
+  protected function make_request($url = '', $query = '') {
     $ch = curl_init();
     curl_setopt_array($ch, $this->curlopts);
+    if (is_array($query) && count($query)) {
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+    }
+    else {
+      $url .= "?$query";
+    }
     curl_setopt($ch, CURLOPT_URL, $url);
     $result = curl_exec($ch);
     $result = apply_filters('dkowpplugin_api_after_request', $result, $ch, $url);
