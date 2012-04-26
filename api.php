@@ -6,6 +6,13 @@
  * @package dko-wpplugin
  */
 
+if (!function_exists('curl_init')) {
+  throw new Exception('DKOWPPlugin_API requires the CURL PHP extension.');
+}
+if (!function_exists('json_decode')) {
+  throw new Exception('DKOWPPlugin_API requires the JSON PHP extension.');
+}
+
 if (!class_exists('DKOWPPlugin_API')):
 abstract class DKOWPPlugin_API
 {
