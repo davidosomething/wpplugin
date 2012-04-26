@@ -16,6 +16,7 @@ if (!function_exists('json_decode')) {
 if (!class_exists('DKOWPPlugin_API')):
 abstract class DKOWPPlugin_API
 {
+  private $cookie_name = '';
   protected $curlopts = array();
   protected $ch = null; // curl handler
 
@@ -24,9 +25,13 @@ abstract class DKOWPPlugin_API
    *
    * @return void
    */
-  public function __construct() {
+  public function __construct($cookie_name = 'DKOWPPlugin') {
+    $this->cookie_name = $cookie_name . '.tmp';
+
     if (!defined('SERVER_ENVIRONMENT') || in_array(SERVER_ENVIRONMENT, array('STAGE', 'PROD'))) {
       $this->curlopts = array(
+        CURLOPT_COOKIEFILE      => $this->cookie_name,
+        CURLOPT_COOKIEJAR       => $this->cookie_name,
         CURLOPT_SSL_VERIFYHOST  => true,
         CURLOPT_SSL_VERIFYPEER  => true,
         CURLOPT_RETURNTRANSFER  => true,
@@ -35,6 +40,8 @@ abstract class DKOWPPlugin_API
     }
     elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV'))) { // local or dev
       $this->curlopts = array(
+        CURLOPT_COOKIEFILE      => $this->cookie_name,
+        CURLOPT_COOKIEJAR       => $this->cookie_name,
         CURLOPT_CONNECTTIMEOUT  => 2,
         CURLOPT_SSL_VERIFYHOST  => false,
         CURLOPT_SSL_VERIFYPEER  => false,
@@ -51,10 +58,12 @@ abstract class DKOWPPlugin_API
    *
    * @TODO handle expired access tokens
    * @param string $url
+   * @param mixed $query string of GET params or array of POST
+   * @param object $pch reference to curl persistent handler to use
    * @return string response
    */
-  protected function make_request($url = '', $query = '') {
-    $ch = curl_init();
+  protected function make_request($url = '', $query = '', &$pch = null) {
+    $ch = $pch ? $pch : curl_init();
     curl_setopt_array($ch, $this->curlopts);
     if (is_array($query) && count($query)) {
       curl_setopt($ch, CURLOPT_POST, 1);
@@ -67,7 +76,11 @@ abstract class DKOWPPlugin_API
     $result = curl_exec($ch);
     $result = apply_filters('dkowpplugin_api_after_request', $result, $ch, $url);
     do_action('dkowppplugin_api_handle_errors', $ch, $result);
-    curl_close($ch);
+
+    // close if not persistent
+    if (!$pch) {
+      curl_close($ch);
+    }
     return $result;
   }
 
