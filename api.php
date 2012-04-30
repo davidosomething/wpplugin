@@ -66,10 +66,10 @@ abstract class DKOWPPlugin_API
     curl_setopt_array($ch, $this->curlopts);
     if (is_array($query) && count($query)) {
       curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($query));
     }
     else {
-      $url .= "?$query";
+      $url .= '?' . urlencode($query);
     }
     curl_setopt($ch, CURLOPT_URL, $url);
     $result = curl_exec($ch);
