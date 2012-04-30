@@ -42,7 +42,6 @@ abstract class DKOWPPlugin_API
       $this->curlopts = array(
         CURLOPT_COOKIEFILE      => $this->cookie_name,
         CURLOPT_COOKIEJAR       => $this->cookie_name,
-        CURLOPT_CONNECTTIMEOUT  => 2,
         CURLOPT_SSL_VERIFYHOST  => false,
         CURLOPT_SSL_VERIFYPEER  => false,
         CURLOPT_RETURNTRANSFER  => true,
