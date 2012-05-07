@@ -69,7 +69,7 @@ abstract class DKOWPPlugin_API
       curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($query));
     }
     else {
-      $url .= '?' . urlencode($query);
+      $url .= '?' . $query;
     }
     curl_setopt($ch, CURLOPT_URL, $url);
     $result = curl_exec($ch);
