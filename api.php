@@ -38,7 +38,7 @@ abstract class DKOWPPlugin_API
         CURLOPT_SSLVERSION      => 3 // fixes everything :D
       );
     }
-    elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV'))) { // local or dev
+    elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV', 'QA'))) { // local or dev
       $this->curlopts = array(
         CURLOPT_COOKIEFILE      => $this->cookie_name,
         CURLOPT_COOKIEJAR       => $this->cookie_name,
