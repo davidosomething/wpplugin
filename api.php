@@ -40,7 +40,6 @@ abstract class DKOWPPlugin_API
     }
     elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV', 'QA'))) { // local or dev
       $this->curlopts = array(
-        CURLOPT_TIMEOUT         => 5, // 5 seconds
         CURLOPT_COOKIEFILE      => $this->cookie_name,
         CURLOPT_COOKIEJAR       => $this->cookie_name,
         CURLOPT_SSL_VERIFYHOST  => false,
