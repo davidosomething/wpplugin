@@ -16,7 +16,7 @@ if (!function_exists('json_decode')) {
 if (!class_exists('DKOWPPlugin_API')):
 abstract class DKOWPPlugin_API
 {
-  private $cookie_name = '';
+  private $cookie_file = '';
   protected $curlopts = array();
   protected $ch = null; // curl handler
 
@@ -25,13 +25,13 @@ abstract class DKOWPPlugin_API
    *
    * @return void
    */
-  public function __construct($cookie_name = 'DKOWPPlugin') {
-    $this->cookie_name = $cookie_name . '.tmp';
+  public function __construct($cookie_file = '/tmp/cookie/DKOWPPlugin.txt') {
+    $this->cookie_file = $cookie_file;
 
     if (!defined('SERVER_ENVIRONMENT') || in_array(SERVER_ENVIRONMENT, array('STAGE', 'PROD'))) {
       $this->curlopts = array(
-        CURLOPT_COOKIEFILE      => $this->cookie_name,
-        CURLOPT_COOKIEJAR       => $this->cookie_name,
+        CURLOPT_COOKIEFILE      => $this->cookie_file,
+        CURLOPT_COOKIEJAR       => $this->cookie_file,
         CURLOPT_SSL_VERIFYHOST  => true,
         CURLOPT_SSL_VERIFYPEER  => true,
         CURLOPT_RETURNTRANSFER  => true,
@@ -40,8 +40,8 @@ abstract class DKOWPPlugin_API
     }
     elseif (in_array(SERVER_ENVIRONMENT, array('LOCAL', 'DEV', 'QA'))) { // local or dev
       $this->curlopts = array(
-        CURLOPT_COOKIEFILE      => $this->cookie_name,
-        CURLOPT_COOKIEJAR       => $this->cookie_name,
+        CURLOPT_COOKIEFILE      => $this->cookie_file,
+        CURLOPT_COOKIEJAR       => $this->cookie_file,
         CURLOPT_SSL_VERIFYHOST  => false,
         CURLOPT_SSL_VERIFYPEER  => false,
         CURLOPT_RETURNTRANSFER  => true,
